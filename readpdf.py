@@ -17,7 +17,7 @@ if not os.path.exists(dirName):
     os.mkdir(dirName)
 
 ''' 
-Part #1 : Converting PDF to images 
+Part #1 : Converting PDF to images and text
 '''
 if not os.path.exists(dirName + "/jpg"):
     os.mkdir(dirName + "/jpg")
@@ -40,7 +40,6 @@ for page in pages:
     # For each page, filename will be:
     # PDF page 1 -> page_1.jpg
     # PDF page 2 -> page_2.jpg
-    # PDF page 3 -> page_3.jpg
     # ....
     # PDF page n -> page_n.jpg
     if not os.path.isfile(dirName + "/jpg/page_" + str(image_counter) + ".jpg"):
@@ -67,18 +66,11 @@ pdf.close()
 Part #2 - Recognizing text from the images using OCR 
 '''
 
-# Variable to get count of total number of pages 
-fileLimit = image_counter - 1
-
-# Creating a text file to write the output 
-outfile = dirName + "/out_text.txt"
-
-# Open the file in append mode so that 
-# All contents of all images are added to the same file 
-f = open(outfile, "a")
+if not os.path.exists(dirName + "/tesseract"):
+    os.mkdir(dirName + "/tesseract")
 
 # Iterate from 1 to total number of pages 
-for i in range(1, fileLimit + 1):
+for i in range(1, image_counter):
     # Set filename to recognize text from
     # Again, these files will be:
     # page_1.jpg
@@ -87,9 +79,14 @@ for i in range(1, fileLimit + 1):
     # page_n.jpg
     filename = dirName + "/jpg/page_" + str(i) + ".jpg"
 
+    out_file = dirName + "/tesseract/page_" + str(i) + ".txt"
     # Recognize the text as string in image using pytesserct
     # language support via https://github.com/tesseract-ocr/tessdata
     text = str(pytesseract.image_to_string(Image.open(filename), lang='por'))
+    # Save the image of the page in system
+    f = open(out_file, "a")
+    if text is None:
+        text = ""
 
     # The recognized text is stored in variable text
     # Any string processing may be applied on text
@@ -101,10 +98,7 @@ for i in range(1, fileLimit + 1):
     # orGeeks is half on first line, remaining on next.
     # To remove this, we replace every '-\n' to ''.
     text = text.replace('-\n', '')
-
-    # Finally, write the processed text to the file.
     f.write(text)
+    f.close()
 
-# Close the file after writing all the text. 
-f.close()
 
