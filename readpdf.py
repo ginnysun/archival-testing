@@ -9,8 +9,8 @@ import os
 test_venv.is_venv()
 
 # Path of the pdf
-PDF_file = "sample_2.pdf"
-dirName = "sample_2"
+PDF_file = "sample_1.pdf"
+dirName = "sample_1"
 pytesseract.pytesseract.tesseract_cmd = 'C:/Users/Ginny Sun/AppData/Local/Tesseract-OCR/tesseract.exe'
 
 if not os.path.exists(dirName):
@@ -88,7 +88,8 @@ for i in range(1, fileLimit + 1):
     filename = dirName + "/jpg/page_" + str(i) + ".jpg"
 
     # Recognize the text as string in image using pytesserct
-    text = str(pytesseract.image_to_string(Image.open(filename)))
+    # language support via https://github.com/tesseract-ocr/tessdata
+    text = str(pytesseract.image_to_string(Image.open(filename), lang='por'))
 
     # The recognized text is stored in variable text
     # Any string processing may be applied on text
